@@ -36,5 +36,4 @@ def moderate_text():
     return jsonify(response_data)
 
 if __name__ == '__main__':
-    # Run the Flask app on port 5000 by default
     app.run(debug=True)
