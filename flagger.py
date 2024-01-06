@@ -19,6 +19,6 @@ if flagged:
 	print("Flagged for hate speech")
 	for attr, value in categories.__dict__.items():
 	    print(attr, value)
-	# print(result)
+	print(result)
 else:
 	print("Not flagged for hate speech")
