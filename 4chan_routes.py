@@ -63,18 +63,17 @@ def moderate_text():
     if not len(third) == 0:
         responses.append(client.moderations.create(input=third))
 
-    for i in range(3):
-        if not len(responses[i].results) == 0:
-            for post, resp in zip(posts[i*32:(i+1)*32], responses[i].results):
-                print(resp.flagged)
-                # Filter and prepare response for true categories only
-                true_categories = {attr: value for attr, value in resp.categories.__dict__.items() if value}
-                print(true_categories)
-                print(post)
-                post["flagged"] = resp.flagged
-                post["categories"] = true_categories
-                if resp.flagged:
-                    flagged_posts.append(post)
+    for i in range(len(responses)):
+        for post, resp in zip(posts[i*32:(i+1)*32], responses[i].results):
+            print(resp.flagged)
+            # Filter and prepare response for true categories only
+            true_categories = {attr: value for attr, value in resp.categories.__dict__.items() if value}
+            print(true_categories)
+            print(post)
+            post["flagged"] = resp.flagged
+            post["categories"] = true_categories
+            if resp.flagged:
+                flagged_posts.append(post)
     # for resp in response.results:
 
     #     print(resp.flagged)
