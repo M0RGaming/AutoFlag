@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class FlaggerService {
 
-  private apiUrl = 'http://server.cpatil.ca:5000/moderate';
+  private apiUrl = 'https://server.cpatil.ca:5000/moderate';
 
   constructor(private http: HttpClient) { }
 

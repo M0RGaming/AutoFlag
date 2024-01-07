@@ -5,13 +5,6 @@ import { FlaggerService} from "./flagger/flagger";
 import {FlaggedInterface, TweetInterface} from "./tweet-interface";
 import {DOCUMENT} from "@angular/common";
 
-export interface Tile {
-  color: string;
-  cols: number;
-  rows: number;
-  text: string;
-}
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
