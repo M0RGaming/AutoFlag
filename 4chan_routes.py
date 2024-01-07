@@ -50,9 +50,6 @@ def moderate_text():
 
     # Perform moderation using OpenAI API
     response = client.moderations.create(input=all_messages)
-    result = response.results[0]
-    flagged = result.flagged
-    categories = result.categories
     for post, resp in zip(posts, response.results):
         print(resp.flagged)
         # Filter and prepare response for true categories only
@@ -104,7 +101,8 @@ def get_thread_data(original_url):
             post_number = post["no"]
             post_name = post["name"]
             try:
-                post_message = strip_tags(post["com"])
+                replacedpost = post["com"].replace('<br>','\n')
+                post_message = strip_tags(replacedpost)
             except:
                 post_message = ""
             obj["no"] = post_number
@@ -121,4 +119,4 @@ if __name__ == '__main__':
     # original_url = "https://boards.4chan.org/a/thread/261499247"
 
     # print(get_thread_data(original_url))
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", ssl_context='adhoc')
