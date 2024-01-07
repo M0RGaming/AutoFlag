@@ -16,6 +16,10 @@ result = response.results[0]
 for resp in response.results:
 	print(resp.flagged)
 	print(resp.categories)
+	print(resp.index)
+
+print("")
+print(resp)
 # flagged = result.flagged
 # categories = result.categories
 
