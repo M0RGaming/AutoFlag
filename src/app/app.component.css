@@ -4,7 +4,6 @@
   border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
-
 .example-sidenav-content {
   display: flex;
   height: 100%;
@@ -16,12 +15,69 @@
   padding: 20px;
 }
 
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .example-card {
-  width: 90%;
+  min-width: 20vw;
   height: 90%;
+  max-width: 20vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.card-text {
+  height: 200px; /* Set a fixed height for consistent text space */
+  overflow-y: scroll;
+}
+
+.card-actions {
+  text-align: center;
+  width: 100%;
+  display: inline-block;
+  height: 40%; /* Added height property */
 }
 
 
-.tweet-profile-pic {
-  clip-path: circle();
+@media only screen and (max-width: 600px) {
+  .example-sidenav {
+    padding: 10px;
+  }
+
+  .card-container {
+    flex-direction: column; /* Change to vertical layout for smaller screens */
+  }
+
+  .example-card {
+    width: 100%; /* Take full width on smaller screens */
+    margin: 0; /* Remove horizontal margin on smaller screens */
+    max-width: none; /* Remove max-width for full width on mobile */
+    min-width: 0; /* Remove min-width for full width on mobile */
+  }
+
+  .card-actions {
+    height: auto; /* Adjust height to auto for better spacing on mobile */
+  }
+
+  .card-text {
+    height: auto; /* Allow the text to take its natural height on mobile */
+    overflow-y: visible; /* Show the full text without a scroll bar */
+  }
+
+  .card-content {
+    width: 100%; /* Ensure card content takes full width on mobile */
+  }
 }
+
+
+

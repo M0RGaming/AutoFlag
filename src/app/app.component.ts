@@ -1,9 +1,9 @@
-import {Component, Inject} from '@angular/core';
-import {MatButtonModule} from "@angular/material/button";
-import {MatGridListModule} from '@angular/material/grid-list';
-import { FlaggerService} from "./flagger/flagger";
-import {FlaggedInterface, TweetInterface} from "./tweet-interface";
+import {Component, Inject, Pipe, PipeTransform} from '@angular/core';
+import {FlaggerService} from "./flagger/flagger";
+import {fourchanInterface, TweetInterface} from "./tweet-interface";
 import {DOCUMENT} from "@angular/common";
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+
 
 @Component({
   selector: 'app-root',
@@ -11,50 +11,17 @@ import {DOCUMENT} from "@angular/common";
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  constructor(@Inject(DOCUMENT) private document: Document, private flaggerService: FlaggerService, ) {}
+  constructor(@Inject(DOCUMENT) private document: Document, private flaggerService: FlaggerService, private dialog: MatDialog) {}
   title = 'autoflag';
   showFiller = false;
 
-  tweetdb: TweetInterface[] = [
-    {
-      user: "mismagius",
-      id: "@igramum",
-      text: 'if you told me that wubwoofwolf would private all his recent videos on youtube and upload a 15 minute' +
-        ' video about self-reflection, consent, the purpose of life and the implications of "influencing" as an ' +
-        'influencer, i would say "What the fuck"',
-      picture: "https://pbs.twimg.com/profile_images/1731429124596498432/tN2IVdAp_400x400.jpg",
-    },
-    {
-      user: "Cat",
-      id: "1203123",
-      text: "The cat is dead",
-      picture: "https://material.angular.io/assets/img/examples/shiba2.jpg",
-    },
-    {
-      user: "Scary Guy",
-      id: "1203123",
-      text: "I'm about to kill this guy",
-      picture: "https://material.angular.io/assets/img/examples/shiba2.jpg",
-    },
-  ]
-  flaggeddb: TweetInterface[] = []
+
+  ignored = false
+  anyList = true
+
+  flaggeddb: fourchanInterface[] = []
+  ignoreddb: fourchanInterface[] = []
   toggleValue: any;
-
-  setForFlag(): void {
-    for (let i in this.tweetdb) {
-      let tweet = this.tweetdb[i] as FlaggedInterface
-      this.flaggerService.moderateText(tweet.text).subscribe(data => {
-        if (data.flagged) {
-          tweet.flags = data.categories
-          this.flaggeddb.push(tweet)
-        }
-      })
-    }
-  }
-
-  getTweets(): void {
-
-  }
 
 
   loadStyle(styleName: string) {
@@ -76,5 +43,115 @@ export class AppComponent {
     }
   }
 
+  deleteCallback(tweet: fourchanInterface): void {
+    this.flaggeddb = this.flaggeddb.filter(function (el) {
+      return el.no != tweet.no;
+    })
+  }
+  deleteIgnoreCallback(tweet: fourchanInterface): void {
+    this.ignoreddb = this.ignoreddb.filter(function (el) {
+      return el.no != tweet.no;
+    })
+  }
 
+  clickIgnoreCallback(tweet: fourchanInterface): void {
+    this.flaggeddb = this.flaggeddb.filter(function (el) {
+      return el.no != tweet.no;
+    })
+    this.ignoreddb.push(tweet)
+    console.log(this.ignoreddb)
+  }
+
+
+
+  async openQueryModal(): Promise<string> {
+    const dialogRef = this.dialog.open(QueryModalComponent, {
+      width: '400px'
+    });
+
+    const result = await dialogRef.afterClosed().toPromise();
+
+    return result;
+  }
+
+  async saveQuery() {
+    const queryValue = await this.openQueryModal();
+    console.log('Entered query url:', queryValue);
+    this.flaggerService.moderateText(queryValue).subscribe(data => {
+      console.log(data)
+      this.flaggeddb = this.flaggeddb.concat(data.posts)
+      console.log(this.flaggeddb)
+    })
+
+  }
+
+
+
+
+}
+
+
+@Component({
+  selector: 'app-query-modal',
+  template: `
+    <h2 mat-dialog-title>Enter URL of 4Chan Thread</h2>
+    <mat-dialog-content>
+      <mat-form-field>
+        <input matInput #queryNameInput placeholder="Thread URL">
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button [mat-dialog-close]="false">Cancel</button>
+      <button mat-button color="primary" (click)="onSubmit(queryNameInput.value)">Save</button>
+    </mat-dialog-actions>
+  `
+})
+export class QueryModalComponent {
+
+  constructor(
+    private dialogRef: MatDialogRef<QueryModalComponent>
+  ) { }
+
+  onSubmit(queryName: string) {
+    this.dialogRef.close(queryName);
+  }
+}
+
+
+@Pipe({name: 'replaceLineBreaks'})
+export class ReplaceLineBreaks implements PipeTransform {
+  transform(value: string): string {
+    return value.replace(/\n/g, '<br/>');
+  }
+}
+
+
+@Pipe({name: 'flagHarrasment'})
+export class FlagHarrasment implements PipeTransform {
+  transform(value: Object): string {
+    let out = ""
+    let maps = {
+      "harassment": "Harassment",
+      "hate": "Hate Speech",
+      "sexual": "Sexual Content",
+      "self-harm": "Self Harm",
+      "sexual/minors": "Sexual Content regarding Minors",
+      "hate/threatening": "Hate Speech",
+      "violence/graphic": "Graphic Violence",
+      "self-harm/intent": "Intent of Self Harm",
+      "self-harm/instructions": "Instructions of Self Harm",
+      "harassment/threatening": "Harassment and threatening",
+      "violence": "Violence"
+    }
+    for (let i in Object.keys(value)) {
+      // @ts-ignore
+      let translated = maps[Object.keys(value)[i]]
+      if (translated) {
+        out += translated
+        out += ", "
+      }
+    }
+    return out.slice(0,-2)
+    //return value.replace(/\n/g, '<br/>');
+  }
 }

@@ -5,6 +5,12 @@ export interface TweetInterface {
   picture: string;
 }
 
-export interface FlaggedInterface extends TweetInterface {
-  flags: any[];
+export interface fourchanInterface {
+  categories: any,
+  name: string,
+  flagged: boolean,
+  com: string,
+  no: number
+
+
 }

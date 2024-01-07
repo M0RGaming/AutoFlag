@@ -9,18 +9,18 @@
     -->
     <div style="display: flex; flex-direction: column; justify-content: space-between; height: 90%">
     <mat-button-toggle-group name="favoriteColor" aria-label="Favorite Color" vertical>
-      <mat-button-toggle value="all"><h2>All</h2></mat-button-toggle>
-      <mat-button-toggle value="hidden"><h2>Hidden</h2></mat-button-toggle>
-      <mat-button-toggle value="ignored"><h2>Ignored</h2></mat-button-toggle>
+      <mat-button-toggle value="all" (click)="anyList = true; ignored = false;"><h2>All</h2></mat-button-toggle>
+      <mat-button-toggle value="ignored" (click)="ignored = true; anyList = false;"><h2>Ignored</h2></mat-button-toggle>
     </mat-button-toggle-group>
-    <button mat-button color="primary" (click)="setForFlag()">Flag Stuff</button>
+    <button mat-button color="primary" (click)="saveQuery()">Flag Stuff</button>
     <mat-button-toggle-group (valueChange)="loadStyle(toggleValue)" [(ngModel)]="toggleValue">
-      <mat-button-toggle value="pink-bluegrey.css" aria-label="Text align left">
-        <mat-icon>format_align_left</mat-icon>
-      </mat-button-toggle>
       <mat-button-toggle value="indigo-pink.css" aria-label="Text align center">
-        <mat-icon>format_align_right</mat-icon>
+        <mat-icon>light_mode</mat-icon>
       </mat-button-toggle>
+      <mat-button-toggle value="pink-bluegrey.css" aria-label="Text align left">
+        <mat-icon>dark_mode</mat-icon>
+      </mat-button-toggle>
+
     </mat-button-toggle-group>
   </div>
   </mat-drawer>
@@ -31,46 +31,56 @@
     </button>
   </div>
 -->
-  <mat-grid-list cols="5" rowHeight="45vh">
-    <mat-grid-tile *ngFor="let tweet of tweetdb;">
-      <mat-card class="example-card" style="margin: 5px">
-        <mat-card-header>
-          <mat-card-title-group>
-            <mat-card-title>{{tweet.user}}</mat-card-title>
-            <mat-card-subtitle>{{tweet.id}}</mat-card-subtitle>
-            <img class="tweet-profile-pic" mat-card-sm-image src="{{tweet.picture}}" >
-          </mat-card-title-group>
-        </mat-card-header>
-        <div style="display: flex; flex-direction: column; justify-content: space-between; height: 90%">
-        <mat-card-content>
-          {{tweet.text}}
-        </mat-card-content>
-        <mat-card-actions style="text-align: center; width: 100%; display: inline-block">
-          <button mat-button color="warn">Delete</button>
-          <button mat-button color="basic">Ignore</button>
-          <button mat-button color="primary">Hide</button>
-        </mat-card-actions>
+
+
+    <div class="card-container" *ngIf="anyList">
+        <div *ngFor="let tweet of flaggeddb;">
+          <mat-card class="example-card" style="margin: 5px" matTooltip="Flagged for: {{tweet.categories | flagHarrasment}}">
+            <mat-card-header>
+              <mat-card-title-group>
+                <mat-card-title>{{tweet.name}}</mat-card-title>
+                <mat-card-subtitle>{{tweet.no}}</mat-card-subtitle>
+    <!--            <img class="tweet-profile-pic" mat-card-sm-image src="{{tweet.picture}}" >-->
+              </mat-card-title-group>
+            </mat-card-header>
+            <div class="card-content">
+              <mat-card-content class="card-text" [innerHTML]="tweet.com | replaceLineBreaks">
+              </mat-card-content>
+            <mat-card-actions class="card-actions">
+              <button mat-button color="warn" (click)="deleteCallback(tweet)">Delete</button>
+              <button mat-button color="basic" (click)="clickIgnoreCallback(tweet)">Ignore</button>
+            </mat-card-actions>
+            </div>
+          </mat-card>
         </div>
-      </mat-card>
-    </mat-grid-tile>
-    <mat-grid-tile *ngFor="let tweet of flaggeddb;">
-      <mat-card class="example-card" style="margin: 5px">
-        <mat-card-header>
-          <mat-card-title-group>
-            <mat-card-title>{{tweet.user}}</mat-card-title>
-            <mat-card-subtitle>{{tweet.id}}</mat-card-subtitle>
-            <img mat-card-sm-image src="{{tweet.picture}}" >
-          </mat-card-title-group>
-        </mat-card-header>
-        <mat-card-content>
-          {{tweet.text}}
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-button color="warn">Delete</button>
-          <button mat-button color="basic">Ignore</button>
-          <button mat-button color="primary">Hide</button>
-        </mat-card-actions>
-      </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
+
+      </div>
+
+      <div class="card-container" *ngIf="ignored">
+        <div *ngFor="let tweet of ignoreddb;">
+          <mat-card class="example-card" style="margin: 5px" matTooltip="Flagged for: {{tweet.categories | flagHarrasment}}">
+            <mat-card-header>
+              <mat-card-title-group>
+                <mat-card-title>{{tweet.name}}</mat-card-title>
+                <mat-card-subtitle>{{tweet.no}}</mat-card-subtitle>
+              </mat-card-title-group>
+            </mat-card-header>
+            <div class="card-content">
+              <mat-card-content class="card-text" [innerHTML]="tweet.com | replaceLineBreaks">
+              </mat-card-content>
+              <mat-card-actions class="card-actions">
+                <button mat-button color="warn" (click)="deleteIgnoreCallback(tweet)">Delete</button>
+                <button mat-button color="basic" (click)="clickIgnoreCallback(tweet)">Ignore</button>
+              </mat-card-actions>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+
+
+
+
+
+
+      <!--<mat-card class="example-card" style="margin: 5px" matTooltip="Flagged for: {{tweet.categories | flagHarrasment}}"> -->
 </mat-drawer-container>

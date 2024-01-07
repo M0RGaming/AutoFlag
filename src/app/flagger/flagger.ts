@@ -18,7 +18,7 @@ export class FlaggerService {
     });
 
     const requestBody = {
-      prompt: prompt
+      original_url: prompt
     };
 
     // Make the request to the Flask API
