@@ -4,6 +4,7 @@
   border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
+
 .example-sidenav-content {
   display: flex;
   height: 100%;
@@ -15,12 +16,12 @@
   padding: 20px;
 }
 
-.flex-container {
-  display: flex;
-  flex-direction: row;
+.example-card {
+  width: 90%;
+  height: 90%;
 }
 
-.example-card {
-  max-width: 15vw;
-  max-height: fit-content;
+
+.tweet-profile-pic {
+  clip-path: circle();
 }
