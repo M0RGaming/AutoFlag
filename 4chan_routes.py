@@ -49,16 +49,30 @@ def moderate_text():
         all_messages.append(post["com"])
 
     # Perform moderation using OpenAI API
-    response = client.moderations.create(input=all_messages)
-    for post, resp in zip(posts, response.results):
-        print(resp.flagged)
-        # Filter and prepare response for true categories only
-        true_categories = {attr: value for attr, value in resp.categories.__dict__.items() if value}
-        print(true_categories)
-        post["flagged"] = resp.flagged
-        post["categories"] = true_categories
-        if resp.flagged:
-            flagged_posts.append(post)
+
+
+    responses = []
+    first = all_messages[:32]
+    second = all_messages[32:64]
+    third = all_messages[64:96]
+
+    if not len(first) == 0:
+        responses.append(client.moderations.create(input=first))
+    if not len(second) == 0:
+        responses.append(client.moderations.create(input=second))
+    if not len(third) == 0:
+        responses.append(client.moderations.create(input=third))
+
+    for response in responses:
+        for post, resp in zip(posts, response.results):
+            print(resp.flagged)
+            # Filter and prepare response for true categories only
+            true_categories = {attr: value for attr, value in resp.categories.__dict__.items() if value}
+            print(true_categories)
+            post["flagged"] = resp.flagged
+            post["categories"] = true_categories
+            if resp.flagged:
+                flagged_posts.append(post)
     # for resp in response.results:
 
     #     print(resp.flagged)
