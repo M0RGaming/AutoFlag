@@ -9,7 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
+      with:
+        ref: web
     - name: All things angular
       uses: AhsanAyaz/angular-deploy-gh-pages-actions@v1.3.2 ## replace by latest version without it you will see Expected format {org}/{repo}[/path]@ref. Actual 'AhsanAyaz/angular-deploy-gh-pages-actions',Input string was not in a correct format.
       with:
@@ -18,3 +20,6 @@ jobs:
         base_href: ''   # make sure this corresponds to https://<your_username>.github.io/<base_href>/
         deploy_branch: gh-pages # The branch the action should deploy to.
         angular_dist_build_folder: dist/autoflag # The folder where your project is supposed to be after running ng build by the action.
+
+permissions:
+  contents: write # Allow write permission to GITHUB_TOKEN to commit to deploy branch.
